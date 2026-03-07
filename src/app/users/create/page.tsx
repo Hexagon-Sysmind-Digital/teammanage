@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mail, Lock, User } from "lucide-react";
@@ -39,14 +40,14 @@ export default function CreateUserPage() {
       const data = await res.json()
 
       if(res.ok){
-        alert("User berhasil dibuat")
+        Swal.fire({ icon: "success", title: "Berhasil", text: "User berhasil dibuat", timer: 1500, showConfirmButton: false })
         router.push("/users")
       }else{
-        alert(data.message || "Gagal membuat user")
+        Swal.fire({ icon: "error", title: "Gagal", text: data.message || "Gagal membuat user" })
       }
 
     }catch(err){
-      alert("Terjadi error")
+      Swal.fire({ icon: "error", title: "Error", text: "Terjadi error" })
     }
 
   }

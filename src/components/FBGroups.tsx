@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 import { motion } from "framer-motion";
 import { Users, Link as LinkIcon, Pencil, Trash } from "lucide-react";
 
@@ -50,13 +51,30 @@ export default function FBGroups() {
   };
 
   const handleUpdate = async (data: any) => {
+  try {
     await updateGroup(editData.id, data);
+
+    setShowForm(false);
     setEditData(null);
+
     fetchGroups();
-  };
+  } catch (error) {
+    console.error("Update failed:", error);
+  }
+};
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Delete this group?")) return;
+    const result = await Swal.fire({
+      title: "Yakin?",
+      text: "Delete this group?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Batal",
+    });
+    if (!result.isConfirmed) return;
     await deleteGroup(id);
     fetchGroups();
   };

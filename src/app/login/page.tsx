@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Lock, Mail } from "lucide-react";
@@ -38,17 +39,17 @@ export default function LoginPage() {
         // simpan token
         localStorage.setItem("token", data.token);
 
-        alert("Login berhasil");
+        Swal.fire({ icon: "success", title: "Berhasil", text: "Login berhasil", timer: 1500, showConfirmButton: false });
 
         router.push("/projects");
 
       } else {
-        alert(data.message || "Login gagal");
+        Swal.fire({ icon: "error", title: "Gagal", text: data.message || "Login gagal" });
       }
 
     } catch (error) {
       console.error(error);
-      alert("Terjadi error saat login");
+      Swal.fire({ icon: "error", title: "Error", text: "Terjadi error saat login" });
     }
   };
 
