@@ -1,19 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
+
   const [open, setOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+  setIsLoggedIn(!!token);
+}, [pathname]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    router.push("/login");
+  };
 
   const menus = [
     { name: "Dashboard", href: "/" },
     { name: "Projects", href: "/projects" },
-    { name: "Groups", href: "/groups" },
+    ...(isLoggedIn ? [{ name: "Groups", href: "/groups" }] : []),
   ];
 
   return (
@@ -21,7 +36,6 @@ export default function Navbar() {
 
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
 
-        {/* LEFT */}
         <div className="flex items-center gap-4">
 
           {/* TOGGLE */}
@@ -57,6 +71,7 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center gap-12 py-7">
 
               {menus.map((menu) => {
+
                 const active = pathname === menu.href;
 
                 return (
@@ -67,7 +82,6 @@ export default function Navbar() {
                     className="relative group text-lg font-medium"
                   >
 
-                    {/* TEXT */}
                     <motion.span
                       whileHover={{ y: -3 }}
                       transition={{ duration: 0.2 }}
@@ -80,7 +94,6 @@ export default function Navbar() {
                       {menu.name}
                     </motion.span>
 
-                    {/* UNDERLINE */}
                     {active ? (
                       <motion.div
                         layoutId="nav-underline"
@@ -93,6 +106,16 @@ export default function Navbar() {
                   </Link>
                 );
               })}
+
+              {/* LOGOUT BUTTON */}
+              {isLoggedIn && (
+                <button
+                  onClick={handleLogout}
+                  className="text-red-500 font-medium hover:text-red-600 transition"
+                >
+                  Logout
+                </button>
+              )}
 
             </div>
           </motion.div>
