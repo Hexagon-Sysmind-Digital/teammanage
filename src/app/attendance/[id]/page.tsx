@@ -10,7 +10,6 @@ import {
   ClipboardCheck,
   User,
   FileText,
-  ImageIcon,
   Clock,
   LogIn,
   LogOut,
@@ -25,7 +24,6 @@ interface Attendance {
   check_in: string;
   check_out: string;
   daily_log: string;
-  image: string;
   created_at: string;
   updated_at: string;
 }
@@ -43,7 +41,6 @@ export default function AttendanceDetail() {
 
   // Editable fields
   const [dailyLog, setDailyLog] = useState("");
-  const [image, setImage] = useState("");
 
   useEffect(() => {
     const fetchAttendance = async () => {
@@ -60,7 +57,6 @@ export default function AttendanceDetail() {
           const att = data.data || data;
           setAttendance(att);
           setDailyLog(att.daily_log || "");
-          setImage(att.image || "");
         } else {
           setError(data.message || "Failed to fetch attendance");
         }
@@ -116,7 +112,6 @@ export default function AttendanceDetail() {
             check_in: attendance?.check_in,
             check_out: currentCheckOut,
             daily_log: dailyLog,
-            image,
           }),
         }
       );
@@ -126,7 +121,7 @@ export default function AttendanceDetail() {
         const att = data.data || data;
         setAttendance((prev) =>
           prev
-            ? { ...prev, user_id: decodedUserId, check_out: currentCheckOut as string, daily_log: dailyLog, image }
+            ? { ...prev, user_id: decodedUserId, check_out: currentCheckOut as string, daily_log: dailyLog }
             : prev
         );
       } else {
@@ -294,7 +289,7 @@ export default function AttendanceDetail() {
         </div>
       </div>
 
-      {/* DAILY LOG & IMAGE DISPLAY */}
+      {/* DAILY LOG DISPLAY */}
       <div className="grid md:grid-cols-2 gap-6 mb-10">
         <div className="bg-white rounded-2xl border shadow-sm p-6">
           <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
@@ -303,23 +298,6 @@ export default function AttendanceDetail() {
           <p className="text-sm text-gray-600 leading-relaxed">{attendance.daily_log}</p>
         </div>
 
-        {attendance.image && (
-          <div className="bg-white rounded-2xl border shadow-sm p-6">
-            <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-              <ImageIcon size={18} className="text-gray-400" /> Image
-            </h3>
-            <div className="rounded-xl overflow-hidden border">
-              <img
-                src={attendance.image}
-                alt="Attendance"
-                className="w-full h-48 object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = "none";
-                }}
-              />
-            </div>
-          </div>
-        )}
       </div>
 
       {/* UPDATE FORM */}
@@ -341,21 +319,6 @@ export default function AttendanceDetail() {
                 className="w-full bg-transparent outline-none text-sm text-black resize-none min-h-[80px]"
                 value={dailyLog}
                 onChange={(e) => setDailyLog(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {/* IMAGE */}
-          <div className="space-y-2">
-            <label className="text-sm text-gray-600 flex items-center gap-2">
-              <ImageIcon size={16} className="text-gray-400" /> Image URL
-            </label>
-            <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-50">
-              <input
-                type="url"
-                className="w-full bg-transparent outline-none text-sm text-black"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
               />
             </div>
           </div>

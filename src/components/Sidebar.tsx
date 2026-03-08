@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, LayoutDashboard, FolderKanban, Users, LogOut, ClipboardCheck } from "lucide-react";
+import { Menu, X, LayoutDashboard, FolderKanban, Users, LogOut, ClipboardCheck, Megaphone, CalendarClock } from "lucide-react";
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -32,6 +32,8 @@ export default function Sidebar() {
       ? [
           { name: "Users", href: "/users", icon: Users },
           { name: "Attendance", href: "/attendance", icon: ClipboardCheck },
+          { name: "Leads", href: "/leads", icon: Megaphone },
+          { name: "Schedules", href: "/schedules", icon: CalendarClock },
           { name: "Groups", href: "/groups", icon: Users },
         ]
       : []),

@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import {
   ClipboardCheck,
   FileText,
-  ImageIcon,
   User,
   Clock,
   Loader2,
@@ -21,7 +20,6 @@ interface Attendance {
   check_in: string;
   check_out: string;
   daily_log: string;
-  image: string;
   created_at: string;
   updated_at: string;
 }
@@ -36,14 +34,13 @@ export default function AttendancePage() {
   // Form state
   // user_id will be extracted via JWT token
   const [dailyLog, setDailyLog] = useState("");
-  const [image, setImage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const fetchAttendances = async () => {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
-        "https://quad-easily-allowed-facts.trycloudflare.com/hexagon/api/attendances/",
+        "https://quad-easily-allowed-facts.trycloudflare.com/hexagon/api/attendances/me",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -114,7 +111,6 @@ export default function AttendancePage() {
           body: JSON.stringify({
             user_id: decodedUserId,
             daily_log: dailyLog,
-            image,
           }),
         }
       );
@@ -122,7 +118,6 @@ export default function AttendancePage() {
       if (res.ok) {
         Swal.fire({ icon: "success", title: "Berhasil", text: "Attendance berhasil dicatat!", timer: 1500, showConfirmButton: false });
         setDailyLog("");
-        setImage("");
         setShowForm(false);
         setLoading(true);
         fetchAttendances();
@@ -207,22 +202,6 @@ export default function AttendancePage() {
               </div>
             </div>
 
-            {/* IMAGE URL */}
-            <div className="space-y-2">
-              <label className="text-sm text-gray-600">Image URL</label>
-              <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-50">
-                <ImageIcon size={18} className="text-gray-400 mr-2" />
-                <input
-                  type="url"
-                  placeholder="https://example.com/path-to-image.jpg"
-                  className="w-full bg-transparent outline-none text-sm text-black placeholder-gray-400"
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-
             {/* SUBMIT */}
             <motion.button
               whileHover={{ scale: 1.03 }}
@@ -283,20 +262,6 @@ export default function AttendancePage() {
                 <p className="text-sm text-gray-600 mb-4 leading-relaxed line-clamp-3">
                   {att.daily_log}
                 </p>
-
-                {/* Image */}
-                {att.image && (
-                  <div className="rounded-xl overflow-hidden border bg-gray-50">
-                    <img
-                      src={att.image}
-                      alt="Attendance"
-                      className="w-full h-40 object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = "none";
-                      }}
-                    />
-                  </div>
-                )}
               </motion.div>
             </Link>
           ))}
