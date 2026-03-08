@@ -38,14 +38,16 @@ export default function ProjectDetail() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Editable fields
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState("pending");
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
     const fetchProject = async () => {
-      const token = localStorage.getItem("token");
       try {
         const res = await fetch(
           `https://quad-easily-allowed-facts.trycloudflare.com/hexagon/api/projects/${params.id}`,
@@ -211,14 +213,16 @@ export default function ProjectDetail() {
         </div>
 
         {/* DELETE BUTTON */}
-        <button
-          onClick={handleDelete}
-          disabled={deleting}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-red-500 border border-red-200 hover:bg-red-50 hover:border-red-300 transition text-sm font-medium disabled:opacity-50"
-        >
-          <Trash2 size={16} />
-          {deleting ? "Deleting..." : "Delete Project"}
-        </button>
+        {isLoggedIn && (
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-red-500 border border-red-200 hover:bg-red-50 hover:border-red-300 transition text-sm font-medium disabled:opacity-50"
+          >
+            <Trash2 size={16} />
+            {deleting ? "Deleting..." : "Delete Project"}
+          </button>
+        )}
       </div>
 
       {/* INFO CARDS */}
@@ -274,7 +278,8 @@ export default function ProjectDetail() {
         </div>
       </div>
 
-      {/* UPDATE FORM */}
+      {/* UPDATE FORM - Only visible when logged in */}
+      {isLoggedIn && (
       <div className="bg-white rounded-2xl border shadow-sm p-8 max-w-xl">
         <h3 className="text-xl font-bold text-gray-800 mb-6">Update Project</h3>
 
@@ -331,6 +336,7 @@ export default function ProjectDetail() {
           {saving ? "Saving..." : "Save Changes"}
         </motion.button>
       </div>
+      )}
     </section>
   );
 }

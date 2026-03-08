@@ -20,10 +20,12 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
     const fetchProjects = async () => {
-      const token = localStorage.getItem("token");
       try {
         const res = await fetch(
           "https://quad-easily-allowed-facts.trycloudflare.com/hexagon/api/projects/",
@@ -92,14 +94,16 @@ export default function ProjectsPage() {
           <span className="text-sm text-gray-500">
             {projects.length} Projects
           </span>
-          <Link
-            href="/projects/create"
-            className="px-4 py-2 rounded-lg text-white text-sm font-medium
-              bg-gradient-to-r from-lime-400 to-lime-600
-              shadow hover:shadow-lg transition hover:scale-105 active:scale-95"
-          >
-            + Create Project
-          </Link>
+          {isLoggedIn && (
+            <Link
+              href="/projects/create"
+              className="px-4 py-2 rounded-lg text-white text-sm font-medium
+                bg-gradient-to-r from-lime-400 to-lime-600
+                shadow hover:shadow-lg transition hover:scale-105 active:scale-95"
+            >
+              + Create Project
+            </Link>
+          )}
         </div>
       </div>
 
