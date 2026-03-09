@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, LayoutDashboard, FolderKanban, Users, LogOut, ClipboardCheck, Megaphone, CalendarClock } from "lucide-react";
+import { getUserRoleFromToken } from "../lib/jwt";
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   const pathname = usePathname();
   const router = useRouter();
@@ -17,6 +19,7 @@ export default function Sidebar() {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
     setIsMobileOpen(false);
+    setUserRole(getUserRoleFromToken(token));
 
     if (!token && pathname !== "/") {
       router.push("/");
@@ -36,7 +39,7 @@ export default function Sidebar() {
     { name: "Projects", href: "/projects", icon: FolderKanban },
     ...(isLoggedIn
       ? [
-          { name: "Users", href: "/users", icon: Users },
+          ...(userRole === "admin" ? [{ name: "Users", href: "/users", icon: Users }] : []),
           { name: "Attendance", href: "/attendance", icon: ClipboardCheck },
           { name: "Leads", href: "/leads", icon: Megaphone },
           { name: "Schedules", href: "/schedules", icon: CalendarClock },

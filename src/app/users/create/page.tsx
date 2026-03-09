@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mail, Lock, User } from "lucide-react";
+import { getUserRoleFromToken } from "../../../lib/jwt";
 
 export default function CreateUserPage() {
 
@@ -14,6 +15,14 @@ export default function CreateUserPage() {
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
   const [role,setRole] = useState("admin");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userRole = getUserRoleFromToken(token);
+    if (userRole !== "admin") {
+      router.push("/dashboard");
+    }
+  }, [router]);
 
   const handleSubmit = async (e:any)=>{
     e.preventDefault();

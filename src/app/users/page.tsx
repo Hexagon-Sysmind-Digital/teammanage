@@ -4,11 +4,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Users, Plus, Search, Trash2, Eye } from "lucide-react";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
+import { getUserRoleFromToken } from "../../lib/jwt";
 
 export default function UsersPage() {
 
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
+  const router = useRouter();
 
   const fetchUsers = async () => {
 
@@ -29,8 +33,44 @@ export default function UsersPage() {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    const token = localStorage.getItem("token");
+    const role = getUserRoleFromToken(token);
+    if (role !== "admin") {
+      router.push("/dashboard");
+    } else {
+      fetchUsers();
+    }
+  }, [router]);
+
+  const handleDelete = async (id: number) => {
+    Swal.fire({
+      title: "Delete User?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#84cc16",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const token = localStorage.getItem("token");
+          const res = await fetch(`https://quad-easily-allowed-facts.trycloudflare.com/hexagon/api/users/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (res.ok) {
+            Swal.fire("Deleted!", "User has been deleted.", "success");
+            fetchUsers();
+          } else {
+            Swal.fire("Failed!", "Failed to delete user.", "error");
+          }
+        } catch (error) {
+          Swal.fire("Error!", "Something went wrong.", "error");
+        }
+      }
+    });
+  };
 
   const filteredUsers = users.filter((user: any) =>
     user.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -188,8 +228,8 @@ export default function UsersPage() {
 
                     <td className="py-4 px-4">
 
-                      <span className="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-600">
-                        User
+                      <span className="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-600 capitalize">
+                        {user.role || "User"}
                       </span>
 
                     </td>
@@ -201,11 +241,11 @@ export default function UsersPage() {
 
                       <div className="flex justify-end gap-3">
 
-                        <button className="text-gray-500 hover:text-blue-600">
+                        <Link href={`/users/${user.id}`} className="text-gray-500 hover:text-blue-600">
                           <Eye size={18}/>
-                        </button>
+                        </Link>
 
-                        <button className="text-gray-500 hover:text-red-600">
+                        <button onClick={() => handleDelete(user.id)} className="text-gray-500 hover:text-red-600">
                           <Trash2 size={18}/>
                         </button>
 
