@@ -299,26 +299,35 @@ export default function ProjectDetail() {
           />
         </div>
 
-        {/* STATUS SELECT */}
-        <div className="space-y-2 mb-8">
+        {/* STATUS PICKER */}
+        <div className="space-y-3 mb-8">
           <label className="text-sm text-gray-600 flex items-center gap-2">
             <Activity size={16} className="text-gray-400" />
             Status
           </label>
-          <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-50">
-            <select
-              className="w-full bg-transparent outline-none text-sm text-black"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              <option value="pending">Pending</option>
-              <option value="planning">Planning</option>
-              <option value="design">Design</option>
-              <option value="development">Development</option>
-              <option value="testing">Testing</option>
-              <option value="revision">Revision</option>
-              <option value="deployment">Deployment</option>
-            </select>
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { value: "pending",     label: "Pending",     active: "bg-gray-100 text-gray-700 border-gray-400" },
+              { value: "planning",    label: "Planning",    active: "bg-blue-50 text-blue-700 border-blue-500" },
+              { value: "design",      label: "Design",      active: "bg-purple-50 text-purple-700 border-purple-500" },
+              { value: "development", label: "Dev",         active: "bg-yellow-50 text-yellow-700 border-yellow-500" },
+              { value: "testing",     label: "Testing",     active: "bg-orange-50 text-orange-700 border-orange-500" },
+              { value: "revision",    label: "Revision",    active: "bg-red-50 text-red-700 border-red-500" },
+              { value: "deployment",  label: "Deploy",      active: "bg-green-50 text-green-700 border-green-500" },
+            ].map((s) => (
+              <button
+                key={s.value}
+                type="button"
+                onClick={() => setStatus(s.value)}
+                className={`py-2 px-2 text-xs font-semibold rounded-lg border-2 transition-all ${
+                  status === s.value
+                    ? s.active + " shadow-sm"
+                    : "bg-gray-50 text-gray-400 border-transparent hover:bg-gray-100"
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
           </div>
         </div>
 

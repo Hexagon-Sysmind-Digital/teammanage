@@ -15,6 +15,11 @@ import {
   Trash2,
   Save,
   Loader2,
+  Facebook,
+  Instagram,
+  Link as LinkIcon,
+  FileText,
+  Tag,
 } from "lucide-react";
 
 interface Lead {
@@ -22,6 +27,11 @@ interface Lead {
   company_name: string;
   client_number: string;
   call_count: number;
+  facebook: string;
+  instagram: string;
+  link: string;
+  page_insight: string;
+  status: string;
   created_at: string;
   updated_at: string;
 }
@@ -40,6 +50,11 @@ export default function LeadDetail() {
   const [companyName, setCompanyName] = useState("");
   const [clientNumber, setClientNumber] = useState("");
   const [callCount, setCallCount] = useState(0);
+  const [facebook, setFacebook] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [link, setLink] = useState("");
+  const [pageInsight, setPageInsight] = useState("");
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
     const fetchLead = async () => {
@@ -58,6 +73,11 @@ export default function LeadDetail() {
           setCompanyName(l.company_name || "");
           setClientNumber(l.client_number || "");
           setCallCount(l.call_count || 0);
+          setFacebook(l.facebook || "");
+          setInstagram(l.instagram || "");
+          setLink(l.link || "");
+          setPageInsight(l.page_insight || "");
+          setStatus(l.status || "");
         } else {
           setError(data.message || "Failed to fetch lead");
         }
@@ -80,13 +100,18 @@ export default function LeadDetail() {
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "text/plain",
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             company_name: companyName,
             client_number: clientNumber,
             call_count: callCount,
+            facebook: facebook,
+            instagram: instagram,
+            link: link,
+            page_insight: pageInsight,
+            status: status,
           }),
         }
       );
@@ -96,7 +121,7 @@ export default function LeadDetail() {
         const l = data.data || data;
         setLead((prev) =>
           prev
-            ? { ...prev, company_name: companyName, client_number: clientNumber, call_count: callCount }
+            ? { ...prev, company_name: companyName, client_number: clientNumber, call_count: callCount, facebook: facebook, instagram: instagram, link: link, page_insight: pageInsight, status: status }
             : prev
         );
       } else {
@@ -121,13 +146,18 @@ export default function LeadDetail() {
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "text/plain",
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             company_name: companyName,
             client_number: clientNumber,
             call_count: newCount,
+            facebook: facebook,
+            instagram: instagram,
+            link: link,
+            page_insight: pageInsight,
+            status: status,
           }),
         }
       );
@@ -315,6 +345,78 @@ export default function LeadDetail() {
         </div>
       </div>
 
+      {/* SOCIAL & DETAILS CARDS */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        {/* FACEBOOK */}
+        <div className="bg-white rounded-2xl border shadow-sm p-6 flex items-center gap-4">
+          <div className="p-3 rounded-lg bg-blue-100 text-blue-600">
+            <Facebook size={24} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-gray-500 text-sm">Facebook</p>
+            <p className="text-sm font-semibold text-gray-800 truncate">
+              {lead.facebook || '-'}
+            </p>
+          </div>
+        </div>
+
+        {/* INSTAGRAM */}
+        <div className="bg-white rounded-2xl border shadow-sm p-6 flex items-center gap-4">
+          <div className="p-3 rounded-lg bg-pink-100 text-pink-600">
+            <Instagram size={24} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-gray-500 text-sm">Instagram</p>
+            <p className="text-sm font-semibold text-gray-800 truncate">
+              {lead.instagram || '-'}
+            </p>
+          </div>
+        </div>
+
+        {/* LINK */}
+        <div className="bg-white rounded-2xl border shadow-sm p-6 flex items-center gap-4">
+          <div className="p-3 rounded-lg bg-indigo-100 text-indigo-600">
+            <LinkIcon size={24} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-gray-500 text-sm">Link</p>
+            <p className="text-sm font-semibold text-gray-800 truncate">
+              {lead.link || '-'}
+            </p>
+          </div>
+        </div>
+
+        {/* PAGE INSIGHT */}
+        <div className="bg-white rounded-2xl border shadow-sm p-6 flex items-center gap-4">
+          <div className="p-3 rounded-lg bg-purple-100 text-purple-600">
+            <FileText size={24} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-gray-500 text-sm">Page Insight</p>
+            <p className="text-sm font-semibold text-gray-800 truncate">
+              {lead.page_insight || '-'}
+            </p>
+          </div>
+        </div>
+
+        {/* STATUS */}
+        <div className="bg-white rounded-2xl border shadow-sm p-6 flex items-center gap-4">
+          <div className={`p-3 rounded-lg ${
+            lead.status === 'approach' ? 'bg-green-100 text-green-600' :
+            lead.status === 'deny' ? 'bg-red-100 text-red-600' :
+            'bg-blue-100 text-blue-600'
+          }`}>
+            <Tag size={24} />
+          </div>
+          <div>
+            <p className="text-gray-500 text-sm">Status</p>
+            <p className="text-lg font-semibold text-gray-800 capitalize">
+              {lead.status || 'new'}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* UPDATE FORM */}
       <div className="bg-white rounded-2xl border shadow-sm p-8 max-w-2xl">
         <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
@@ -367,6 +469,97 @@ export default function LeadDetail() {
                 value={callCount}
                 onChange={(e) => setCallCount(parseInt(e.target.value) || 0)}
               />
+            </div>
+          </div>
+
+          {/* FACEBOOK */}
+          <div className="space-y-2">
+            <label className="text-sm text-gray-600 flex items-center gap-2">
+              <Facebook size={16} className="text-gray-400" /> Facebook
+            </label>
+            <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-50">
+              <input
+                type="text"
+                className="w-full bg-transparent outline-none text-sm text-black"
+                value={facebook}
+                onChange={(e) => setFacebook(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* INSTAGRAM */}
+          <div className="space-y-2">
+            <label className="text-sm text-gray-600 flex items-center gap-2">
+              <Instagram size={16} className="text-gray-400" /> Instagram
+            </label>
+            <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-50">
+              <input
+                type="text"
+                className="w-full bg-transparent outline-none text-sm text-black"
+                value={instagram}
+                onChange={(e) => setInstagram(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* LINK */}
+          <div className="space-y-2">
+            <label className="text-sm text-gray-600 flex items-center gap-2">
+              <LinkIcon size={16} className="text-gray-400" /> Link
+            </label>
+            <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-50">
+              <input
+                type="text"
+                className="w-full bg-transparent outline-none text-sm text-black"
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* PAGE INSIGHT */}
+          <div className="space-y-2">
+            <label className="text-sm text-gray-600 flex items-center gap-2">
+              <FileText size={16} className="text-gray-400" /> Page Insight
+            </label>
+            <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-50">
+              <input
+                type="text"
+                className="w-full bg-transparent outline-none text-sm text-black"
+                value={pageInsight}
+                onChange={(e) => setPageInsight(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* STATUS */}
+          <div className="space-y-3">
+            <label className="text-sm text-gray-600 flex items-center gap-2">
+              <Tag size={16} className="text-gray-400" /> Status
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setStatus("approach")}
+                className={`py-2.5 px-4 flex items-center justify-center gap-2 font-medium transition-all rounded-lg border-2 ${
+                  status === "approach"
+                    ? "bg-green-50 text-green-700 border-green-500 shadow-sm"
+                    : "bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100"
+                }`}
+              >
+                Approach
+              </button>
+              <button
+                type="button"
+                onClick={() => setStatus("deny")}
+                className={`py-2.5 px-4 flex items-center justify-center gap-2 font-medium transition-all rounded-lg border-2 ${
+                  status === "deny"
+                    ? "bg-red-50 text-red-700 border-red-500 shadow-sm"
+                    : "bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100"
+                }`}
+              >
+                Deny
+              </button>
             </div>
           </div>
 

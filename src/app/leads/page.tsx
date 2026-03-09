@@ -14,6 +14,11 @@ import {
   Loader2,
   Plus,
   X,
+  Facebook,
+  Instagram,
+  Link as LinkIcon,
+  FileText,
+  Tag,
 } from "lucide-react";
 
 interface Lead {
@@ -21,6 +26,11 @@ interface Lead {
   company_name: string;
   client_number: string;
   call_count: number;
+  facebook: string;
+  instagram: string;
+  link: string;
+  page_insight: string;
+  status: string;
   created_at: string;
   updated_at: string;
 }
@@ -35,6 +45,11 @@ export default function LeadsPage() {
   // Form state
   const [companyName, setCompanyName] = useState("");
   const [clientNumber, setClientNumber] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [link, setLink] = useState("");
+  const [pageInsight, setPageInsight] = useState("");
+  const [status, setStatus] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const fetchLeads = async () => {
@@ -78,6 +93,17 @@ export default function LeadsPage() {
     const token = localStorage.getItem("token");
     setSubmitting(true);
 
+    const payload = {
+      company_name: companyName,
+      client_number: clientNumber,
+      call_count: 1,
+      facebook: facebook,
+      instagram: instagram,
+      link: link,
+      page_insight: pageInsight,
+      status: status,
+    };
+
     try {
       const res = await fetch(
         "https://quad-easily-allowed-facts.trycloudflare.com/hexagon/api/leads/",
@@ -87,11 +113,7 @@ export default function LeadsPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            company_name: companyName,
-            client_number: clientNumber,
-            call_count: 0,
-          }),
+          body: JSON.stringify(payload),
         }
       );
       const data = await res.json();
@@ -99,11 +121,17 @@ export default function LeadsPage() {
         Swal.fire({ icon: "success", title: "Berhasil", text: "Lead berhasil ditambahkan!", timer: 1500, showConfirmButton: false });
         setCompanyName("");
         setClientNumber("");
+        setFacebook("");
+        setInstagram("");
+        setLink("");
+        setPageInsight("");
+        setStatus("");
         setShowForm(false);
         setLoading(true);
         fetchLeads();
       } else {
-        Swal.fire({ icon: "error", title: "Gagal", text: data.message || "Gagal menambahkan lead" });
+        const errMsg = data.message || data.error || JSON.stringify(data);
+        Swal.fire({ icon: "error", title: `Gagal (${res.status})`, text: errMsg });
       }
     } catch (err) {
       Swal.fire({ icon: "error", title: "Error", text: "Terjadi error" });
@@ -217,6 +245,68 @@ export default function LeadsPage() {
               </div>
             </div>
 
+            {/* FACEBOOK */}
+            <div className="space-y-2">
+              <label className="text-sm text-gray-600">Facebook</label>
+              <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-50">
+                <Facebook size={18} className="text-gray-400 mr-2" />
+                <input
+                  type="text"
+                  placeholder="https://facebook.com/example"
+                  className="w-full bg-transparent outline-none text-sm text-black placeholder-gray-400"
+                  value={facebook}
+                  onChange={(e) => setFacebook(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* INSTAGRAM */}
+            <div className="space-y-2">
+              <label className="text-sm text-gray-600">Instagram</label>
+              <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-50">
+                <Instagram size={18} className="text-gray-400 mr-2" />
+                <input
+                  type="text"
+                  placeholder="@example_ig"
+                  className="w-full bg-transparent outline-none text-sm text-black placeholder-gray-400"
+                  value={instagram}
+                  onChange={(e) => setInstagram(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* LINK */}
+            <div className="space-y-2">
+              <label className="text-sm text-gray-600">Link</label>
+              <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-50">
+                <LinkIcon size={18} className="text-gray-400 mr-2" />
+                <input
+                  type="text"
+                  placeholder="https://example.com"
+                  className="w-full bg-transparent outline-none text-sm text-black placeholder-gray-400"
+                  value={link}
+                  onChange={(e) => setLink(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* PAGE INSIGHT */}
+            <div className="space-y-2">
+              <label className="text-sm text-gray-600">Page Insight</label>
+              <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-50">
+                <FileText size={18} className="text-gray-400 mr-2" />
+                <input
+                  type="text"
+                  placeholder="15k followers"
+                  className="w-full bg-transparent outline-none text-sm text-black placeholder-gray-400"
+                  value={pageInsight}
+                  onChange={(e) => setPageInsight(e.target.value)}
+                />
+              </div>
+            </div>
+
+
+
             {/* SUBMIT */}
             <motion.button
               whileHover={{ scale: 1.03 }}
@@ -260,6 +350,10 @@ export default function LeadsPage() {
                   <th className="text-left px-6 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Company Name</th>
                   <th className="text-left px-6 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Client Number</th>
                   <th className="text-left px-6 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Calls</th>
+                  <th className="text-left px-6 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Facebook</th>
+                  <th className="text-left px-6 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Instagram</th>
+                  <th className="text-left px-6 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Page Insight</th>
+                  <th className="text-left px-6 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Status</th>
                   <th className="text-left px-6 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Action</th>
                 </tr>
               </thead>
@@ -287,6 +381,34 @@ export default function LeadsPage() {
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
                           <PhoneCall size={12} />
                           {lead.call_count}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <Facebook size={13} className="text-blue-400 shrink-0" />
+                          <span className="truncate max-w-[120px]">{lead.facebook || '-'}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <Instagram size={13} className="text-pink-400 shrink-0" />
+                          <span className="truncate max-w-[100px]">{lead.instagram || '-'}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <FileText size={13} className="text-purple-400 shrink-0" />
+                          <span className="truncate max-w-[120px]">{lead.page_insight || '-'}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
+                          lead.status === 'approach' ? 'bg-green-100 text-green-700' :
+                          lead.status === 'deny' ? 'bg-red-100 text-red-700' :
+                          'bg-gray-100 text-gray-500'
+                        }`}>
+                          <Tag size={12} />
+                          {lead.status || '-'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
