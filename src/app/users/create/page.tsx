@@ -13,6 +13,7 @@ export default function CreateUserPage() {
   const [name,setName] = useState("");
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
+  const [role,setRole] = useState("admin");
 
   const handleSubmit = async (e:any)=>{
     e.preventDefault();
@@ -32,7 +33,8 @@ export default function CreateUserPage() {
           body:JSON.stringify({
             name,
             email,
-            password
+            password,
+            role
           })
         }
       )
@@ -148,6 +150,32 @@ export default function CreateUserPage() {
                 onChange={(e)=>setPassword(e.target.value)}
                 required
               />
+
+            </div>
+
+          </div>
+
+
+          {/* ROLE */}
+          <div className="space-y-2">
+
+            <label className="text-sm text-gray-600">
+              Role
+            </label>
+
+            <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-50">
+
+              <User size={18} className="text-gray-400 mr-2"/>
+
+              <select
+                className="w-full bg-transparent outline-none text-sm text-black"
+                value={role}
+                onChange={(e)=>setRole(e.target.value)}
+                required
+              >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
 
             </div>
 

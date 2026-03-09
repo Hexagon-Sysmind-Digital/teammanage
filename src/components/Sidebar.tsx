@@ -17,7 +17,13 @@ export default function Sidebar() {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
     setIsMobileOpen(false);
-  }, [pathname]);
+
+    if (!token && pathname !== "/") {
+      router.push("/");
+    } else if (token && pathname === "/") {
+      router.push("/dashboard");
+    }
+  }, [pathname, router]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -26,7 +32,7 @@ export default function Sidebar() {
   };
 
   const menus = [
-    { name: "Dashboard", href: "/", icon: LayoutDashboard },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Projects", href: "/projects", icon: FolderKanban },
     ...(isLoggedIn
       ? [
@@ -38,6 +44,8 @@ export default function Sidebar() {
         ]
       : []),
   ];
+
+  if (pathname === "/") return null;
 
   return (
     <>
