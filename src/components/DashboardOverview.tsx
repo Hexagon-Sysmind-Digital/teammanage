@@ -1,19 +1,75 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FolderKanban, CalendarDays, Activity } from "lucide-react";
+import { FolderKanban, CalendarDays, Activity, Loader2 } from "lucide-react";
+
+interface Project {
+  id: number;
+  project_name: string;
+  project_progress: number;
+  status: string;
+}
 
 export default function DashboardOverview() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [schedulesCount, setSchedulesCount] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
 
-  const projects = [
-    { id: 1, name: "E-Procurement System", progress: 80 },
-    { id: 2, name: "Company Profile Website", progress: 60 },
-    { id: 3, name: "Mobile Inventory App", progress: 45 },
-    { id: 4, name: "Waste Management System", progress: 90 },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const [projectsRes, schedulesRes] = await Promise.all([
+          fetch("https://quad-easily-allowed-facts.trycloudflare.com/hexagon/api/projects/", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("https://quad-easily-allowed-facts.trycloudflare.com/hexagon/api/schedules/", {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+        ]);
+
+        if (projectsRes.ok) {
+          const projectsData = await projectsRes.json();
+          let list: any[] = [];
+          if (Array.isArray(projectsData)) list = projectsData;
+          else if (Array.isArray(projectsData.data)) list = projectsData.data;
+          else if (Array.isArray(projectsData.projects)) list = projectsData.projects;
+          else if (Array.isArray(projectsData.results)) list = projectsData.results;
+          else if (projectsData && typeof projectsData === "object" && projectsData.id) list = [projectsData];
+          setProjects(list);
+        }
+
+        if (schedulesRes.ok) {
+          const schedulesData = await schedulesRes.json();
+          let list: any[] = [];
+          if (Array.isArray(schedulesData)) list = schedulesData;
+          else if (Array.isArray(schedulesData.data)) list = schedulesData.data;
+          else if (Array.isArray(schedulesData.results)) list = schedulesData.results;
+          else if (schedulesData && typeof schedulesData === "object" && schedulesData.id) list = [schedulesData];
+          setSchedulesCount(list.length);
+        }
+      } catch (err) {
+        console.error("Failed to fetch dashboard data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   const totalProjects = projects.length;
-  const totalWorkDays = 124;
+  // Use 'dev' or 'development' status for active projects
+  const activeProjectsCount = projects.filter(p => p.status?.toLowerCase() === 'dev' || p.status?.toLowerCase() === 'development').length;
+
+  if (loading) {
+    return (
+      <section className="w-full min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 size={40} className="animate-spin text-lime-600" />
+      </section>
+    );
+  }
 
   return (
     <section className="w-full min-h-screen bg-gray-50 px-6 md:px-10 py-10 space-y-10">
@@ -46,7 +102,7 @@ export default function DashboardOverview() {
           </div>
         </motion.div>
 
-        {/* WORK DAYS */}
+        {/* SCHEDULES / WORK DAYS */}
         <motion.div
           whileHover={{ y: -6 }}
           className="bg-white rounded-2xl p-6 shadow-md border flex items-center gap-4"
@@ -56,8 +112,8 @@ export default function DashboardOverview() {
           </div>
 
           <div>
-            <p className="text-gray-500 text-sm">Total Work Days</p>
-            <h2 className="text-3xl font-bold">{totalWorkDays}</h2>
+            <p className="text-gray-500 text-sm">Total Schedule</p>
+            <h2 className="text-3xl font-bold">{schedulesCount}</h2>
           </div>
         </motion.div>
 
@@ -72,7 +128,7 @@ export default function DashboardOverview() {
 
           <div>
             <p className="text-gray-500 text-sm">Active Projects</p>
-            <h2 className="text-3xl font-bold">{projects.length}</h2>
+            <h2 className="text-3xl font-bold">{activeProjectsCount}</h2>
           </div>
         </motion.div>
 
@@ -87,38 +143,42 @@ export default function DashboardOverview() {
           </h2>
 
           <span className="text-sm text-gray-400">
-            {projects.length} Active Projects
+            {activeProjectsCount} Active Projects
           </span>
         </div>
 
         <div className="space-y-6">
 
-          {projects.map((project) => (
-            <div key={project.id} className="space-y-2">
+          {projects.length > 0 ? (
+            projects.map((project) => (
+              <div key={project.id} className="space-y-2">
 
-              <div className="flex justify-between">
-                <span className="font-medium text-gray-700">
-                  {project.name}
-                </span>
+                <div className="flex justify-between">
+                  <span className="font-medium text-gray-700">
+                    {project.project_name}
+                  </span>
 
-                <span className="text-sm text-gray-500">
-                  {project.progress}%
-                </span>
+                  <span className="text-sm text-gray-500">
+                    {project.project_progress}%
+                  </span>
+                </div>
+
+                <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
+
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${project.project_progress}%` }}
+                    transition={{ duration: 1 }}
+                    className="h-full bg-gradient-to-r from-lime-400 to-lime-600 rounded-full"
+                  />
+
+                </div>
+
               </div>
-
-              <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
-
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${project.progress}%` }}
-                  transition={{ duration: 1 }}
-                  className="h-full bg-gradient-to-r from-lime-400 to-lime-600 rounded-full"
-                />
-
-              </div>
-
-            </div>
-          ))}
+            ))
+          ) : (
+            <div className="text-center text-gray-500 py-4">No projects available</div>
+          )}
 
         </div>
 
