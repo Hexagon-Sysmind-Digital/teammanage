@@ -216,7 +216,7 @@ export default function AttendanceDetail() {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-4xl font-bold text-gray-800">
-              Attendance #{attendance.id}
+              Attendance
             </h1>
           </div>
           <p className="text-gray-500">
