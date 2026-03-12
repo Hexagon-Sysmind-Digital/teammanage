@@ -77,7 +77,7 @@ export default function Sidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          fixed md:relative top-0 left-0 h-screen z-50
+          fixed md:relative top-0 left-0 h-[100dvh] z-50
           bg-white border-r border-gray-200 shadow-sm
           flex flex-col shrink-0
           transition-all duration-300 ease-in-out
@@ -147,7 +147,7 @@ export default function Sidebar() {
 
         {/* Logout */}
         {isLoggedIn && (
-          <div className="p-3 border-t border-gray-200 bg-white">
+          <div className="p-3 pb-6 md:pb-3 border-t border-gray-200 bg-white">
             <button
               onClick={handleLogout}
               className={`
