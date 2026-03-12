@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, LayoutDashboard, FolderKanban, Users, LogOut, ClipboardCheck, Megaphone, CalendarClock } from "lucide-react";
+import { Menu, X, LayoutDashboard, FolderKanban, Users, LogOut, ClipboardCheck, Megaphone, CalendarClock, Wallet } from "lucide-react";
 import { getUserRoleFromToken } from "../lib/jwt";
 
 export default function Sidebar() {
@@ -39,12 +39,13 @@ export default function Sidebar() {
     { name: "Projects", href: "/projects", icon: FolderKanban },
     ...(isLoggedIn
       ? [
-          ...(userRole === "admin" ? [{ name: "Users", href: "/users", icon: Users }] : []),
-          { name: "Attendance", href: "/attendance", icon: ClipboardCheck },
-          { name: "Leads", href: "/leads", icon: Megaphone },
-          { name: "Schedules", href: "/schedules", icon: CalendarClock },
-          { name: "Groups", href: "/groups", icon: Users },
-        ]
+        ...(userRole === "admin" ? [{ name: "Users", href: "/users", icon: Users }] : []),
+        { name: "Attendance", href: "/attendance", icon: ClipboardCheck },
+        { name: "Leads", href: "/leads", icon: Megaphone },
+        { name: "Schedules", href: "/schedules", icon: CalendarClock },
+        { name: "Cashflow", href: "/cashflow", icon: Wallet },
+        { name: "Groups", href: "/groups", icon: Users },
+      ]
       : []),
   ];
 
@@ -131,9 +132,8 @@ export default function Sidebar() {
               >
                 <Icon
                   size={22}
-                  className={`shrink-0 transition-colors duration-200 ${
-                    active ? "text-white" : "text-gray-400 group-hover:text-lime-600"
-                  }`}
+                  className={`shrink-0 transition-colors duration-200 ${active ? "text-white" : "text-gray-400 group-hover:text-lime-600"
+                    }`}
                 />
                 {!collapsed && (
                   <span className="font-medium whitespace-nowrap tracking-wide text-[15px]">

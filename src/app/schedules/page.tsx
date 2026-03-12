@@ -14,6 +14,7 @@ import {
   Loader2,
   Plus,
   X,
+  Activity,
 } from "lucide-react";
 
 interface Schedule {
@@ -165,13 +166,13 @@ export default function SchedulesPage() {
   const getStatusBadge = (s: string) => {
     const lower = s?.toLowerCase();
     if (lower === "approve") {
-      return "bg-emerald-100 text-emerald-700 border-emerald-200";
+      return "bg-emerald-100 text-emerald-700";
     } else if (lower === "cancel") {
-      return "bg-red-100 text-red-600 border-red-200";
+      return "bg-red-100 text-red-700";
     } else if (lower === "pending") {
-      return "bg-yellow-100 text-yellow-700 border-yellow-200";
+      return "bg-yellow-100 text-yellow-700";
     }
-    return "bg-gray-100 text-gray-600 border-gray-200";
+    return "bg-gray-100 text-gray-600";
   };
 
   return (
@@ -262,18 +263,29 @@ export default function SchedulesPage() {
             </div>
 
             {/* STATUS */}
-            <div className="space-y-2">
-              <label className="text-sm text-gray-600">Status</label>
-              <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-50">
-                <select
-                  className="w-full bg-transparent outline-none text-sm text-black"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                >
-                  <option value="approve">Approve</option>
-                  <option value="pending">Pending</option>
-                  <option value="cancel">Cancel</option>
-                </select>
+            <div className="space-y-3">
+              <label className="text-sm text-gray-600 flex items-center gap-2">
+                <Activity size={16} className="text-gray-400" /> Status
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { value: "approve", label: "Approve", active: "bg-emerald-50 text-emerald-700 border-emerald-500" },
+                  { value: "pending", label: "Pending", active: "bg-yellow-50 text-yellow-700 border-yellow-500" },
+                  { value: "cancel", label: "Cancel", active: "bg-red-50 text-red-700 border-red-500" },
+                ].map((s) => (
+                  <button
+                    key={s.value}
+                    type="button"
+                    onClick={() => setStatus(s.value)}
+                    className={`py-2 px-2 text-xs font-semibold rounded-lg border-2 transition-all ${
+                      status === s.value
+                        ? s.active + " shadow-sm"
+                        : "bg-gray-50 text-gray-400 border-transparent hover:bg-gray-100"
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -351,7 +363,7 @@ export default function SchedulesPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border capitalize ${getStatusBadge(schedule.status)}`}>
+                        <span className={`text-xs px-3 py-1 rounded-full capitalize ${getStatusBadge(schedule.status)}`}>
                           {schedule.status}
                         </span>
                       </td>
