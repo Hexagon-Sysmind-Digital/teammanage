@@ -14,6 +14,9 @@ import {
   Clock,
   Trash2,
   Save,
+  Facebook,
+  Instagram,
+  Link as LinkIcon,
   FileText,
   Tag,
 } from "lucide-react";
