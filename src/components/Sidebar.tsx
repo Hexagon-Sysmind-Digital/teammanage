@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, LayoutDashboard, FolderKanban, Users, LogOut, ClipboardCheck, Megaphone, CalendarClock, Wallet } from "lucide-react";
+import { Menu, X, LayoutDashboard, FolderKanban, Users, LogOut, ClipboardCheck, Megaphone, CalendarClock, Wallet, LogOut as LogOutIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { getUserRoleFromToken } from "../lib/jwt";
 
 export default function Sidebar() {
@@ -147,22 +148,41 @@ export default function Sidebar() {
 
         {/* Logout */}
         {isLoggedIn && (
-          <div className="p-3 pb-6 md:pb-3 border-t border-gray-200 bg-white">
-            <button
+          <div className={`p-4 mt-auto border-t border-gray-100 bg-gray-50/50 ${collapsed ? "flex justify-center" : ""}`}>
+            <motion.button
+              whileHover={{ scale: 1.02, x: collapsed ? 0 : 4 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleLogout}
               className={`
-                flex items-center gap-3 px-3 py-3 w-full rounded-xl
-                transition-all duration-200 group
-                text-red-500 hover:bg-red-50 hover:text-red-600
-                ${collapsed ? "justify-center" : ""}
+                flex items-center gap-3 px-4 py-3.5 w-full rounded-2xl
+                transition-all duration-300 group
+                bg-white border border-gray-200 shadow-sm
+                hover:border-red-200 hover:bg-red-50/50 hover:shadow-md hover:shadow-red-500/10
+                ${collapsed ? "justify-center !w-12 !h-12 !p-0" : ""}
               `}
               title={collapsed ? "Logout" : ""}
             >
-              <LogOut size={22} className="group-hover:scale-110 transition-transform shrink-0" />
+              <div className={`
+                p-2 rounded-xl transition-colors duration-300
+                ${collapsed ? "bg-transparent group-hover:bg-red-50" : "bg-red-50 group-hover:bg-red-100"}
+              `}>
+                <LogOutIcon 
+                  size={20} 
+                  className="text-red-500 group-hover:text-red-600 transition-transform duration-300 group-hover:rotate-12" 
+                />
+              </div>
+              
               {!collapsed && (
-                <span className="font-medium whitespace-nowrap tracking-wide text-[15px]">Logout</span>
+                <div className="flex flex-col items-start leading-none">
+                  <span className="font-bold text-gray-800 text-[14px] group-hover:text-red-600 transition-colors">
+                    Logout
+                  </span>
+                  <span className="text-[10px] text-gray-400 font-medium mt-1 uppercase tracking-wider group-hover:text-red-400">
+                    Sign Out Account
+                  </span>
+                </div>
               )}
-            </button>
+            </motion.button>
           </div>
         )}
       </aside>
