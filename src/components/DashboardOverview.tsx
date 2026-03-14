@@ -32,21 +32,32 @@ export default function DashboardOverview() {
         if (projectsRes.ok) {
           const projectsData = await projectsRes.json();
           let list: any[] = [];
-          if (Array.isArray(projectsData)) list = projectsData;
-          else if (Array.isArray(projectsData.data)) list = projectsData.data;
-          else if (Array.isArray(projectsData.projects)) list = projectsData.projects;
-          else if (Array.isArray(projectsData.results)) list = projectsData.results;
-          else if (projectsData && typeof projectsData === "object" && projectsData.id) list = [projectsData];
+          if (Array.isArray(projectsData)) {
+            list = projectsData;
+          } else if (projectsData && Array.isArray(projectsData.data)) {
+            list = projectsData.data;
+          } else if (projectsData && Array.isArray(projectsData.projects)) {
+            list = projectsData.projects;
+          } else if (projectsData && Array.isArray(projectsData.results)) {
+            list = projectsData.results;
+          } else if (projectsData && typeof projectsData === "object" && projectsData.id) {
+            list = [projectsData];
+          }
           setProjects(list);
         }
 
         if (schedulesRes.ok) {
           const schedulesData = await schedulesRes.json();
           let list: any[] = [];
-          if (Array.isArray(schedulesData)) list = schedulesData;
-          else if (Array.isArray(schedulesData.data)) list = schedulesData.data;
-          else if (Array.isArray(schedulesData.results)) list = schedulesData.results;
-          else if (schedulesData && typeof schedulesData === "object" && schedulesData.id) list = [schedulesData];
+          if (Array.isArray(schedulesData)) {
+            list = schedulesData;
+          } else if (schedulesData && Array.isArray(schedulesData.data)) {
+            list = schedulesData.data;
+          } else if (schedulesData && Array.isArray(schedulesData.results)) {
+            list = schedulesData.results;
+          } else if (schedulesData && typeof schedulesData === "object" && schedulesData.id) {
+            list = [schedulesData];
+          }
           setSchedulesCount(list.length);
         }
       } catch (err) {

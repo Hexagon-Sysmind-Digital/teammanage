@@ -422,8 +422,14 @@ export default function SchedulesPage() {
           </div>
 
           {schedules.length === 0 && (
-            <div className="text-center py-16 text-gray-400">
-              No schedules found. Add your first schedule!
+            <div className="bg-white rounded-2xl border shadow-sm p-16 text-center">
+              <div className="w-16 h-16 bg-lime-100 text-lime-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CalendarClock size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">No Schedules Found</h3>
+              <p className="text-gray-500 max-w-sm mx-auto">
+                You don&apos;t have any schedules yet. Click the &quot;New Schedule&quot; button above to get started.
+              </p>
             </div>
           )}
         </motion.div>
