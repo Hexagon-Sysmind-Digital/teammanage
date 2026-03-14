@@ -11,7 +11,6 @@ import {
     Calendar,
     Briefcase,
     DollarSign,
-    Loader2,
     Plus,
     X,
     CreditCard,
@@ -19,6 +18,7 @@ import {
     TrendingUp,
     TrendingDown,
 } from "lucide-react";
+import CustomLoading from "../../components/CustomLoading";
 
 interface Income {
     id: number;
@@ -80,6 +80,7 @@ export default function CashflowPage() {
 
     // ---------- FETCH INCOMES ----------
     const fetchIncomes = async () => {
+        const minimumDelay = new Promise(resolve => setTimeout(resolve, 2000));
         const token = localStorage.getItem("token");
         setLoadingIncome(true);
         try {
@@ -108,12 +109,14 @@ export default function CashflowPage() {
         } catch (err) {
             setErrorIncome("Failed to connect to server");
         } finally {
+            await minimumDelay;
             setLoadingIncome(false);
         }
     };
 
     // ---------- FETCH EXPENSES ----------
     const fetchExpenses = async () => {
+        const minimumDelay = new Promise(resolve => setTimeout(resolve, 2000));
         const token = localStorage.getItem("token");
         setLoadingExpense(true);
         try {
@@ -142,6 +145,7 @@ export default function CashflowPage() {
         } catch (err) {
             setErrorExpense("Failed to connect to server");
         } finally {
+            await minimumDelay;
             setLoadingExpense(false);
         }
     };
@@ -506,11 +510,7 @@ export default function CashflowPage() {
                     </AnimatePresence>
 
                     {/* LOADING / ERROR */}
-                    {loadingIncome && (
-                        <div className="flex items-center justify-center py-20">
-                            <Loader2 size={32} className="animate-spin text-lime-500" />
-                        </div>
-                    )}
+                    {loadingIncome && <CustomLoading variant="inline" />}
                     {!loadingIncome && errorIncome && <div className="text-center py-20 text-red-500">{errorIncome}</div>}
 
                     {/* INCOME TABLE */}
@@ -684,11 +684,7 @@ export default function CashflowPage() {
                     </AnimatePresence>
 
                     {/* LOADING / ERROR */}
-                    {loadingExpense && (
-                        <div className="flex items-center justify-center py-20">
-                            <Loader2 size={32} className="animate-spin text-red-500" />
-                        </div>
-                    )}
+                    {loadingExpense && <CustomLoading variant="inline" />}
                     {!loadingExpense && errorExpense && <div className="text-center py-20 text-red-500">{errorExpense}</div>}
 
                     {/* EXPENSE TABLE */}

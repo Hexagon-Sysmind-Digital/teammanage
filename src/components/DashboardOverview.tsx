@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FolderKanban, CalendarDays, Activity, Loader2 } from "lucide-react";
+import { FolderKanban, CalendarDays, Activity } from "lucide-react";
+import CustomLoading from "./CustomLoading";
 
 interface Project {
   id: number;
@@ -18,6 +19,9 @@ export default function DashboardOverview() {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
+      // Enforce 2s loading as requested
+      const minimumDelay = new Promise(resolve => setTimeout(resolve, 2000));
+
       const token = localStorage.getItem("token");
       try {
         const [projectsRes, schedulesRes] = await Promise.all([
@@ -75,11 +79,7 @@ export default function DashboardOverview() {
   const activeProjectsCount = projects.filter(p => p.status?.toLowerCase() === 'dev' || p.status?.toLowerCase() === 'development').length;
 
   if (loading) {
-    return (
-      <section className="w-full min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-lime-600" />
-      </section>
-    );
+    return <CustomLoading variant="full" />;
   }
 
   return (

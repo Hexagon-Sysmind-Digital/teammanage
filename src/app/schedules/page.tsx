@@ -11,11 +11,11 @@ import {
   Clock,
   Eye,
   Trash2,
-  Loader2,
   Plus,
   X,
   Activity,
 } from "lucide-react";
+import CustomLoading from "../../components/CustomLoading";
 
 interface Schedule {
   id: number;
@@ -42,6 +42,7 @@ export default function SchedulesPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const fetchSchedules = async () => {
+    const minimumDelay = new Promise(resolve => setTimeout(resolve, 2000));
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
@@ -69,6 +70,7 @@ export default function SchedulesPage() {
     } catch (err) {
       setError("Failed to connect to server");
     } finally {
+      await minimumDelay;
       setLoading(false);
     }
   };
@@ -336,11 +338,7 @@ export default function SchedulesPage() {
       </AnimatePresence>
 
       {/* LOADING */}
-      {loading && (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 size={32} className="animate-spin text-lime-500" />
-        </div>
-      )}
+      {loading && <CustomLoading variant="inline" />}
 
       {/* ERROR */}
       {error && (

@@ -15,8 +15,8 @@ import {
   BarChart3,
   Trash2,
   Save,
-  Loader2,
 } from "lucide-react";
+import CustomLoading from "../../../components/CustomLoading";
 
 interface Project {
   id: number;
@@ -48,6 +48,7 @@ export default function ProjectDetail() {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
     const fetchProject = async () => {
+      const minimumDelay = new Promise(resolve => setTimeout(resolve, 2000));
       try {
         const res = await fetch(
           `https://quad-easily-allowed-facts.trycloudflare.com/hexagon/api/projects/${params.id}`,
@@ -67,6 +68,7 @@ export default function ProjectDetail() {
       } catch (err) {
         setError("Failed to connect to server");
       } finally {
+        await minimumDelay;
         setLoading(false);
       }
     };
@@ -167,11 +169,7 @@ export default function ProjectDetail() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 size={32} className="animate-spin text-lime-500" />
-      </div>
-    );
+    return <CustomLoading variant="full" />;
   }
 
   if (error || !project) {

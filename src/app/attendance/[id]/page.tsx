@@ -15,8 +15,8 @@ import {
   LogOut,
   Trash2,
   Save,
-  Loader2,
 } from "lucide-react";
+import CustomLoading from "../../../components/CustomLoading";
 
 interface Attendance {
   id: number;
@@ -44,6 +44,7 @@ export default function AttendanceDetail() {
 
   useEffect(() => {
     const fetchAttendance = async () => {
+      const minimumDelay = new Promise(resolve => setTimeout(resolve, 2000));
       const token = localStorage.getItem("token");
       try {
         const res = await fetch(
@@ -77,6 +78,7 @@ export default function AttendanceDetail() {
       } catch (err) {
         setError("Failed to connect to server");
       } finally {
+        await minimumDelay;
         setLoading(false);
       }
     };
@@ -182,11 +184,7 @@ export default function AttendanceDetail() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 size={32} className="animate-spin text-lime-500" />
-      </div>
-    );
+    return <CustomLoading variant="full" />;
   }
 
   if (error || !attendance) {

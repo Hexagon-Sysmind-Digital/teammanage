@@ -11,7 +11,6 @@ import {
   PhoneCall,
   Eye,
   Trash2,
-  Loader2,
   Plus,
   X,
   Facebook,
@@ -20,6 +19,7 @@ import {
   FileText,
   Tag,
 } from "lucide-react";
+import CustomLoading from "../../components/CustomLoading";
 
 interface Lead {
   id: number;
@@ -53,6 +53,7 @@ export default function LeadsPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const fetchLeads = async () => {
+    const minimumDelay = new Promise(resolve => setTimeout(resolve, 2000));
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
@@ -66,9 +67,9 @@ export default function LeadsPage() {
         let list: any[] = [];
         if (Array.isArray(data)) {
           list = data;
-        } else if (Array.isArray(data.data)) {
+        } else if (data && Array.isArray(data.data)) {
           list = data.data;
-        } else if (Array.isArray(data.results)) {
+        } else if (data && Array.isArray(data.results)) {
           list = data.results;
         } else if (data && typeof data === "object" && data.id) {
           list = [data];
@@ -80,6 +81,7 @@ export default function LeadsPage() {
     } catch (err) {
       setError("Failed to connect to server");
     } finally {
+      await minimumDelay;
       setLoading(false);
     }
   };
@@ -354,11 +356,7 @@ export default function LeadsPage() {
       </AnimatePresence>
 
       {/* LOADING */}
-      {loading && (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 size={32} className="animate-spin text-lime-500" />
-        </div>
-      )}
+      {loading && <CustomLoading variant="inline" />}
 
       {/* ERROR */}
       {error && (

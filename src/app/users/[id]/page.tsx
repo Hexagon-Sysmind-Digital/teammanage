@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Edit, Save, User, Mail, Lock, Shield } from "lucide-react";
 import Swal from "sweetalert2";
 import { getUserRoleFromToken } from "../../../lib/jwt";
+import CustomLoading from "../../../components/CustomLoading";
 
 export default function UserDetailPage({ params }: { params: any }) {
   const router = useRouter();
@@ -38,6 +39,7 @@ export default function UserDetailPage({ params }: { params: any }) {
   }, [id, router]);
 
   const fetchUser = async (userId: string) => {
+    const minimumDelay = new Promise(resolve => setTimeout(resolve, 2000));
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`https://quad-easily-allowed-facts.trycloudflare.com/hexagon/api/users/${userId}`, {
@@ -58,6 +60,7 @@ export default function UserDetailPage({ params }: { params: any }) {
       console.error(error);
       Swal.fire("Error", "Failed to fetch user details", "error");
     } finally {
+      await minimumDelay;
       setLoading(false);
     }
   };
@@ -93,11 +96,7 @@ export default function UserDetailPage({ params }: { params: any }) {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-lime-500"></div>
-      </div>
-    );
+    return <CustomLoading variant="full" />;
   }
 
   return (

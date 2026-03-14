@@ -14,13 +14,10 @@ import {
   Clock,
   Trash2,
   Save,
-  Loader2,
-  Facebook,
-  Instagram,
-  Link as LinkIcon,
   FileText,
   Tag,
 } from "lucide-react";
+import CustomLoading from "../../../components/CustomLoading";
 
 interface Lead {
   id: number;
@@ -58,6 +55,7 @@ export default function LeadDetail() {
 
   useEffect(() => {
     const fetchLead = async () => {
+      const minimumDelay = new Promise(resolve => setTimeout(resolve, 2000));
       const token = localStorage.getItem("token");
       try {
         const res = await fetch(
@@ -84,6 +82,7 @@ export default function LeadDetail() {
       } catch (err) {
         setError("Failed to connect to server");
       } finally {
+        await minimumDelay;
         setLoading(false);
       }
     };
@@ -226,13 +225,8 @@ export default function LeadDetail() {
     });
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 size={32} className="animate-spin text-lime-500" />
-      </div>
-    );
-  }
+      {/* LOADING */}
+      {loading && <CustomLoading variant="inline" />}
 
   if (error || !lead) {
     return (

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import FBGroupForm from "./FBGroupForm";
+import CustomLoading from "./CustomLoading";
 import {
   getGroups,
   createGroup,
@@ -30,19 +31,25 @@ export default function FBGroups() {
   const [loading, setLoading] = useState(true);
 
   const fetchGroups = async () => {
+    const minimumDelay = new Promise(resolve => setTimeout(resolve, 2000));
     try {
       const data = await getGroups();
+      let list: any[] = [];
       if (Array.isArray(data)) {
-        setGroups(data);
-      } else if (Array.isArray(data.data)) {
-        setGroups(data.data);
-      } else {
-        setGroups([]);
+        list = data;
+      } else if (data && Array.isArray(data.data)) {
+        list = data.data;
+      } else if (data && Array.isArray(data.results)) {
+        list = data.results;
+      } else if (data && typeof data === "object" && data.id) {
+        list = [data];
       }
+      setGroups(list);
     } catch (error) {
       console.error("Failed fetch groups:", error);
       setGroups([]);
     } finally {
+      await minimumDelay;
       setLoading(false);
     }
   };
@@ -171,11 +178,7 @@ export default function FBGroups() {
       </div>
 
       {/* LOADING */}
-      {loading && (
-        <div className="flex justify-center py-20">
-          <div className="w-8 h-8 rounded-full border-4 border-lime-400 border-t-transparent animate-spin" />
-        </div>
-      )}
+      {loading && <CustomLoading variant="inline" />}
 
       {/* EMPTY */}
       {!loading && groups.length === 0 && (

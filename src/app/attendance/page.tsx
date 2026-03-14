@@ -9,10 +9,10 @@ import {
   FileText,
   User,
   Clock,
-  Loader2,
   Plus,
   X,
 } from "lucide-react";
+import CustomLoading from "../../components/CustomLoading";
 
 interface Attendance {
   id: number;
@@ -37,6 +37,7 @@ export default function AttendancePage() {
   const [submitting, setSubmitting] = useState(false);
 
   const fetchAttendances = async () => {
+    const minimumDelay = new Promise(resolve => setTimeout(resolve, 2000));
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
@@ -76,6 +77,7 @@ export default function AttendancePage() {
     } catch (err) {
       setError("Failed to connect to server");
     } finally {
+      await minimumDelay;
       setLoading(false);
     }
   };
@@ -219,11 +221,7 @@ export default function AttendancePage() {
       )}
 
       {/* LOADING */}
-      {loading && (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 size={32} className="animate-spin text-lime-500" />
-        </div>
-      )}
+      {loading && <CustomLoading variant="inline" />}
 
       {/* ERROR */}
       {error && (

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   FolderKanban, 
-  Loader2,
   FileText,
   Building2,
   Layers,
@@ -16,6 +15,7 @@ import {
   X,
   Plus 
 } from "lucide-react";
+import CustomLoading from "./CustomLoading";
 import Swal from "sweetalert2";
 
 interface Project {
@@ -45,6 +45,8 @@ export default function ProjectsPage() {
   const [projectProgress, setProjectProgress] = useState(0);
   const [formStatus, setFormStatus] = useState("pending");
   const [submitting, setSubmitting] = useState(false);
+
+  const minimumDelay = new Promise(resolve => setTimeout(resolve, 2000));
 
   const fetchProjects = async (token: string | null) => {
     try {
@@ -77,6 +79,7 @@ export default function ProjectsPage() {
     } catch (err) {
       setError("Failed to connect to server");
     } finally {
+      await minimumDelay;
       setLoading(false);
     }
   };
@@ -183,11 +186,7 @@ export default function ProjectsPage() {
       </div>
 
       {/* LOADING / ERROR */}
-      {loading && (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 size={32} className="animate-spin text-lime-500" />
-        </div>
-      )}
+      {loading && <CustomLoading variant="inline" />}
 
       {error && (
         <div className="text-center py-20 text-red-500">{error}</div>
